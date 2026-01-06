@@ -6,6 +6,7 @@ BROKER = "localhost"
 PORT = 1883
 TOPIC = "yugioh/card"
 
+API_URL = "http://localhost:8000/card"
 # -------------------- CALLBACK -------------------- #
 
 def on_connect(client, userdata, flags, rc) :
@@ -19,6 +20,16 @@ def on_connect(client, userdata, flags, rc) :
 def on_message(client, userdata, msg) :
 	card_name = msg.payload.decode()
 	print(f"Message reçu : {card_name}")
+
+	try :
+		response = requests.post(API_URL, params={"card_name": card_name})
+		if response.status_code == 200 :
+			data = response.json()
+			print(f"{data}")
+		else :
+			print(f"Erreur API : {response.status_code}")
+	except Exception as e :
+		print(f"Erreur requête API : {e}")
 
 # -------------------- CLIENT MQTT -------------------- #
 
