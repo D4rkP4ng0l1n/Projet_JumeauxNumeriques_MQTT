@@ -5,7 +5,7 @@ import requests
 BROKER = "localhost"
 PORT = 1883
 TOPIC = "yugioh/card"
-
+TOPIC_GODOT = "yugioh/godot_trigger"
 API_URL = "http://localhost:8000/card"
 # -------------------- CALLBACK -------------------- #
 
@@ -26,6 +26,9 @@ def on_message(client, userdata, msg) :
 		if response.status_code == 200 :
 			data = response.json()
 			print(f"{data}")
+			client.publish(TOPIC_GODOT, card_name)
+			print(f"Notification envoyée à Godot sur {TOPIC_GODOT}")
+
 		else :
 			print(f"Erreur API : {response.status_code}")
 	except Exception as e :
