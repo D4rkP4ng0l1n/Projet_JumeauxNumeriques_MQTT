@@ -20,12 +20,12 @@ def read_card(name):
 	return card
 
 @app.post("/card")
-def process_card(card_name, zone, orientation, action) :
+def process_card(card_name: str, zone: str = "unknown", orientation: str = "unknown", action: str = "UNKNOWN") :
 	card = get_card(card_name)
 
 	name = card["name"]
 	image = card["card_images"][0]["image_url"]
-	log_card(name, image, zone or "unknown", orientation or "unknown", action or "UNKNOWN")
+	log_card(name, image, zone, orientation, action)
 
 	return card
 

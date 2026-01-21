@@ -60,11 +60,15 @@ def msgTopicTelephone(client, payload) :
 def msgTopicGodot(client, payload) :
 	try :
 		card_infos = json.loads(payload)
-		response = requests.post(API_URL, json={"card_name": card_infos["card_name"], "zone": card_infos.get("zone"), "orientation": card_infos.get("orientation"), "action": "PLACED"})
+		card_name = card_infos.get("card_name")
+		zone = card_infos.get("zone", "unknown")
+		orientation = card_infos.get("orientation", "unknown")
+		
+		response = requests.post(API_URL, params={"card_name": card_name, "zone": zone, "orientation": orientation, "action": "PLACED"})
 		if response.status_code == 200 :
 			data = response.json()
 			print(f"{data}")
-			client.publish(TOPIC_GODOT_OUT, card_infos)
+			client.publish(TOPIC_GODOT_OUT, payload)
 			print(f"Notification envoyée à Godot sur {TOPIC_GODOT_OUT}")
 		else :
 			print(f"Erreur API : {response.status_code}")
