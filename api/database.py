@@ -13,18 +13,21 @@ def init_db():
 		CREATE TABLE IF NOT EXISTS history (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			card_name TEXT NOT NULL,
-			image_url TEXT,
+			image_url TEXT NOT NULL,
+			zone TEXT NOT NULL,
+			orientation TEXT NOT NULL,
+			action TEXT NOT NULL,
 			timestamp TEXT NOT NULL
 		)
 	""")
 	conn.commit()
 	conn.close()
 
-def log_card(card_name, image_url):
+def log_card(card_name, image_url, zone, orientation, action):
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
 	cursor.execute(
-		"INSERT INTO history (card_name, image_url, timestamp) VALUES (?,?,?)", (card_name, image_url, datetime.now().isoformat())
+		"INSERT INTO history (card_name, image_url, zone, orientation, action, timestamp) VALUES (?,?,?,?,?, ?)", (card_name, image_url, zone, orientation, action, datetime.now().isoformat())
 	)
 	conn.commit()
 	conn.close()
@@ -34,7 +37,7 @@ def get_card_by_name(card_name):
 	cursor = conn.cursor()
 
 	cursor.execute("""
-		SELECT card_name, image_url, timestamp
+		SELECT card_name, image_url, zone, orientation, action, timestamp
 		FROM history
 		WHERE card_name = ?
 		ORDER BY timestamp DESC
@@ -50,4 +53,38 @@ def get_card_by_name(card_name):
 	return {
 		"card_name": row[0],
 		"image_url": row[1],
+		"zone": row[2],
+		"orientation": row[3],
+		"action": row[4],
+		"timestamp": row[5]
 	}
+
+def get_actions_between(start_datetime, end_datetime):
+	conn = sqlite3.connect(DB_PATH)
+	cursor = conn.cursor()
+
+	cursor.execute("""
+		SELECT id, card_name, image_url, zone, orientation, action, timestamp
+		FROM history
+		WHERE timestamp BETWEEN ? AND ?
+		ORDER BY timestamp ASC
+	""", (start_datetime, end_datetime))
+
+	rows = cursor.fetchall()
+	conn.close()
+	
+	if not rows:
+		return []
+
+	return [
+		{
+			"id": row[0],
+			"card_name": row[1],
+			"image_url": row[2],
+			"zone": row[3],
+			"orientation": row[4],
+			"action": row[5],
+			"timestamp": row[6]
+		}
+		for row in rows
+	]
