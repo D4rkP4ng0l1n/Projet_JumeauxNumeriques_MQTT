@@ -6,15 +6,18 @@ BROKER = "localhost"
 PORT = 1883
 API_URL = "http://localhost:8000/card"
 # -------------------- TOPIC -------------------- #
-TOPIC = "yugioh/card" # Topic entre carte et app
-TOPIC_GODOT = "yugioh/godot_trigger" # Topic entre app et godot
+TOPIC_CARD_IN = "yugioh/card/in"
+TOPIC_CARD_OUT = "yugioh/card/out"
+
+TOPIC_GODOT_IN = "yugioh/godot/in"
+TOPIC_GODOT_OUT = "yugioh/godot/out"
 # -------------------- CALLBACK -------------------- #
 
 def on_connect(client, userdata, flags, rc) :
 	if rc == 0:
 		client.subscribe([
-			(TOPIC, 0),
-			(TOPIC_GODOT, 0)
+			(TOPIC_CARD_IN, 0),
+			(TOPIC_GODOT_IN, 0)
 		])
 		print("Connecté au broker MQTT")
 	else :
@@ -25,17 +28,17 @@ def on_message(client, userdata, msg) :
 	print(f"Message reçu sur {msg.topic} : {payload}")
 
 	match msg.topic :
-		case t if t == TOPIC :
-			msgTopic(client, payload)
-		case t if t == TOPIC_GODOT :
-			msgTopicGodot(client, payload)
+		case t if t == TOPIC_CARD_IN :
+			return msgTopicGodot(client, payload)
+		case t if t == TOPIC_GODOT_IN :
+			return msgTopicTelephone(client, payload)
 		case _ :
 			pass
 	
 
-def msgTopic(client, card_name) :
-	client.publish(TOPIC, card_name)
-	print(f"Notification envoyée sur {TOPIC}")
+def msgTopicTelephone(client, card_name) :
+	client.publish(TOPIC_CARD_OUT, card_name)
+	print(f"Notification envoyée sur {TOPIC_CARD_OUT}")
 
 
 def msgTopicGodot(client, card_name) :
@@ -44,8 +47,8 @@ def msgTopicGodot(client, card_name) :
 		if response.status_code == 200 :
 			data = response.json()
 			print(f"{data}")
-			client.publish(TOPIC_GODOT, card_name)
-			print(f"Notification envoyée à Godot sur {TOPIC_GODOT}")
+			client.publish(TOPIC_GODOT_OUT, card_name)
+			print(f"Notification envoyée à Godot sur {TOPIC_GODOT_OUT}")
 
 		else :
 			print(f"Erreur API : {response.status_code}")
