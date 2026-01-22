@@ -42,17 +42,19 @@ def on_message(client, userdata, msg) :
 def msgTopicTelephone(client, payload) :
 	try :
 		godot_data = json.loads(payload)
+
 		card_name = godot_data["card_name"]
 		zone = godot_data["zone"]
 		orientation = godot_data["orientation"]
+		action = godot_data["action"]
 		
 		card = get_card(card_name)
 		image_url = card["card_images"][0]["image_url"]
 		
-		log_card(card_name, image_url, zone, orientation, action="DELETE")
+		log_card(card_name, image_url, zone, orientation, action)
 
-		client.publish(TOPIC_CARD_OUT, card_name)
-		print(f"{card_name} envoyé sur {TOPIC_CARD_OUT}")
+		client.publish(TOPIC_CARD_OUT, payload)
+		print(f"{payload} envoyé sur {TOPIC_CARD_OUT}")
 	except Exception as e :
 		print(f"Erreur lors du log de la carte : {e}")
 
