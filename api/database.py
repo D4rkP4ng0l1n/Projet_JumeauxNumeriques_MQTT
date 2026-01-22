@@ -59,6 +59,34 @@ def get_card_by_name(card_name):
 		"timestamp": row[5]
 	}
 
+def get_card_by_id(id):
+	conn = sqlite3.connect(DB_PATH)
+	cursor = conn.cursor()
+
+	cursor.execute("""
+		SELECT card_name, image_url, zone, orientation, action, timestamp
+		FROM history
+		WHERE id = ?
+		ORDER BY timestamp DESC
+		LIMIT 1
+	""", (id,))
+
+	row = cursor.fetchone()
+	conn.close()
+	
+	if row is None:
+		return None
+
+	return {
+		"card_name": row[0],
+		"image_url": row[1],
+		"zone": row[2],
+		"orientation": row[3],
+		"action": row[4],
+		"timestamp": row[5]
+	}
+
+
 def get_actions_between(start_datetime, end_datetime):
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
