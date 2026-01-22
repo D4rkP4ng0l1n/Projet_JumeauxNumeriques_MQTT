@@ -68,7 +68,7 @@ def msgTopicGodot(client, payload) :
 		if response.status_code == 200 :
 			data = response.json()
 			print(f"Carte trouvé sur l'API Yu-gi-Oh : {data}")
-			client.publish(TOPIC_GODOT_OUT, payload)
+			client.publish(TOPIC_GODOT_OUT, card_name)
 			print(f"Notification envoyée à Godot sur {TOPIC_GODOT_OUT}")
 		else :
 			print(f"Erreur API : {response.status_code}")
