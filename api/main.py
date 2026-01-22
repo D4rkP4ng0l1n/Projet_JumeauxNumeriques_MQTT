@@ -35,9 +35,11 @@ def process_card(card_name: str, zone: str = "unknown", orientation: str = "unkn
 
 	name = card["name"]
 	image = card["card_images"][0]["image_url"]
-	log_card(name, image, zone, orientation, action)
+	card_id = log_card(name, image, zone, orientation, action)
 
-	return card
+	return {
+		"id": card_id
+	}
 
 @app.get("/actions")
 def get_actions(start: str, end: str):

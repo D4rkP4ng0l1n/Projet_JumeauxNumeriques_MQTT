@@ -52,7 +52,7 @@ def msgTopicTelephone(client, payload) :
 		log_card(card_name, image_url, zone, orientation, action="DELETE")
 
 		client.publish(TOPIC_CARD_OUT, card_name)
-		print(f"Notification envoyée sur {TOPIC_CARD_OUT}")
+		print(f"{card_name} envoyé sur {TOPIC_CARD_OUT}")
 	except Exception as e :
 		print(f"Erreur lors du log de la carte : {e}")
 
@@ -68,8 +68,9 @@ def msgTopicGodot(client, payload) :
 		if response.status_code == 200 :
 			data = response.json()
 			print(f"Carte trouvé sur l'API Yu-gi-Oh : {data}")
-			client.publish(TOPIC_GODOT_OUT, card_name)
-			print(f"Notification envoyée à Godot sur {TOPIC_GODOT_OUT}")
+			card_id = data["id"]
+			client.publish(TOPIC_GODOT_OUT, str(card_id))
+			print(f"Notification envoyée à Godot sur {TOPIC_GODOT_OUT} avec l'ID : {card_id}")
 		else :
 			print(f"Erreur API : {response.status_code}")
 	except Exception as e :

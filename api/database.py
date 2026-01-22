@@ -30,7 +30,9 @@ def log_card(card_name, image_url, zone, orientation, action):
 		"INSERT INTO history (card_name, image_url, zone, orientation, action, timestamp) VALUES (?,?,?,?,?, ?)", (card_name, image_url, zone, orientation, action, datetime.now().isoformat())
 	)
 	conn.commit()
+	card_id = cursor.lastrowid
 	conn.close()
+	return card_id
 
 def get_card_by_name(card_name):
 	conn = sqlite3.connect(DB_PATH)
