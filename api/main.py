@@ -1,7 +1,7 @@
 # -------------------- IMPORTS -------------------- #
 from fastapi import FastAPI, HTTPException
 from api.yugioh import get_card
-from api.database import init_db, log_card, get_card_by_name, get_card_by_id, get_actions_between
+from api.database import init_db, log_card, get_card_by_name, get_card_by_id, get_actions_between, get_all_cards
 # -------------------- MAIN -------------------- #
 
 app = FastAPI()
@@ -19,14 +19,21 @@ def read_card(name):
 
 	return card
 
-@app.get("/card/{id}")
-def read_card_by_id(id):
-	card = get_card_by_id(id)
-
+@app.get("/card/id/{card_id}")
+def read_card_by_id(card_id: int):
+	card = get_card_by_id(card_id)
 	if card is None:
 		raise HTTPException(status_code=404, detail="Carte non trouvée")
 
 	return card
+
+@app.get("/cards")
+def get_all():
+	cards = get_all_cards()
+	return {
+		"count": len(cards),
+		"cards": cards
+	}
 
 
 @app.post("/card")

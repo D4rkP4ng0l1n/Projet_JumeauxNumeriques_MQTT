@@ -27,7 +27,7 @@ def log_card(card_name, image_url, zone, orientation, action):
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
 	cursor.execute(
-		"INSERT INTO history (card_name, image_url, zone, orientation, action, timestamp) VALUES (?,?,?,?,?, ?)", (card_name, image_url, zone, orientation, action, datetime.now().isoformat())
+		"INSERT INTO history (card_name, image_url, zone, orientation, action, timestamp) VALUES (?,?,?,?,?,?)", (card_name, image_url, zone, orientation, action, datetime.now().isoformat())
 	)
 	conn.commit()
 	card_id = cursor.lastrowid
@@ -69,8 +69,6 @@ def get_card_by_id(id):
 		SELECT card_name, image_url, zone, orientation, action, timestamp
 		FROM history
 		WHERE id = ?
-		ORDER BY timestamp DESC
-		LIMIT 1
 	""", (id,))
 
 	row = cursor.fetchone()
@@ -99,6 +97,35 @@ def get_actions_between(start_datetime, end_datetime):
 		WHERE timestamp BETWEEN ? AND ?
 		ORDER BY timestamp ASC
 	""", (start_datetime, end_datetime))
+
+	rows = cursor.fetchall()
+	conn.close()
+	
+	if not rows:
+		return []
+
+	return [
+		{
+			"id": row[0],
+			"card_name": row[1],
+			"image_url": row[2],
+			"zone": row[3],
+			"orientation": row[4],
+			"action": row[5],
+			"timestamp": row[6]
+		}
+		for row in rows
+	]
+
+def get_all_cards():
+	conn = sqlite3.connect(DB_PATH)
+	cursor = conn.cursor()
+
+	cursor.execute("""
+		SELECT id, card_name, image_url, zone, orientation, action, timestamp
+		FROM history
+		ORDER BY timestamp DESC
+	""")
 
 	rows = cursor.fetchall()
 	conn.close()
