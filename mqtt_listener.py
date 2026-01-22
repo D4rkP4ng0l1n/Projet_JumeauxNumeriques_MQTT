@@ -41,6 +41,7 @@ def on_message(client, userdata, msg) :
 
 def msgTopicTelephone(client, payload) :
 	try :
+		# Récupération des données de la carte depuis Godot pour envoyer sur téléphone
 		godot_data = json.loads(payload)
 
 		card_name = godot_data["card_name"]
@@ -61,12 +62,14 @@ def msgTopicTelephone(client, payload) :
 
 def msgTopicGodot(client, payload) :
 	try :
+		# Récupération des données de la carte depuis le téléphone pour envoyer sur Godot
 		card_infos = json.loads(payload)
 		card_name = card_infos["card_name"]
 		zone = card_infos["zone"]
 		orientation = card_infos["orientation"]
 		
-		response = requests.post(API_URL, params={"card_name": card_name, "zone": zone, "orientation": orientation, "action": "PLACED"})
+		# Requête à l'API Yu gi oh pour vérifier la carte
+		response = requests.post(API_URL, params={"card_name": card_name, "zone": zone, "orientation": orientation, "action": "play"})
 		if response.status_code == 200 :
 			data = response.json()
 			print(f"Carte trouvé sur l'API Yu-gi-Oh : {data}")

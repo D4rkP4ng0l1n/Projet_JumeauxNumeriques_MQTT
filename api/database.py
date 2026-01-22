@@ -6,6 +6,7 @@ from pathlib import Path
 
 DB_PATH = Path("data/history.db")
 
+# Création de la table history
 def init_db():
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
@@ -23,6 +24,7 @@ def init_db():
 	conn.commit()
 	conn.close()
 
+# Enregistrer la carte et son état dans la BDD
 def log_card(card_name, image_url, zone, orientation, action):
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
@@ -34,6 +36,7 @@ def log_card(card_name, image_url, zone, orientation, action):
 	conn.close()
 	return card_id
 
+# Obtenir la dernière carte touchée avec son nom
 def get_card_by_name(card_name):
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
@@ -61,6 +64,7 @@ def get_card_by_name(card_name):
 		"timestamp": row[5]
 	}
 
+# Obtenir les informations d'une carte avec son id
 def get_card_by_id(id):
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
@@ -86,7 +90,7 @@ def get_card_by_id(id):
 		"timestamp": row[5]
 	}
 
-
+# Obtenir le déroulé d'une partie
 def get_actions_between(start_datetime, end_datetime):
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
@@ -117,6 +121,7 @@ def get_actions_between(start_datetime, end_datetime):
 		for row in rows
 	]
 
+# Obtenir toutes les cartes de la BDD
 def get_all_cards():
 	conn = sqlite3.connect(DB_PATH)
 	cursor = conn.cursor()
