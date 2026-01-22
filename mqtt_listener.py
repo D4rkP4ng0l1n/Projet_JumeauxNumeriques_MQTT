@@ -43,8 +43,8 @@ def msgTopicTelephone(client, payload) :
 	try :
 		godot_data = json.loads(payload)
 		card_name = godot_data["card_name"]
-		zone = godot_data.get("zone", "unknown")
-		orientation = godot_data.get("orientation", "unknown")
+		zone = godot_data["zone"]
+		orientation = godot_data["orientation"]
 		
 		card = get_card(card_name)
 		image_url = card["card_images"][0]["image_url"]
@@ -60,14 +60,14 @@ def msgTopicTelephone(client, payload) :
 def msgTopicGodot(client, payload) :
 	try :
 		card_infos = json.loads(payload)
-		card_name = card_infos.get("card_name")
-		zone = card_infos.get("zone", "unknown")
-		orientation = card_infos.get("orientation", "unknown")
+		card_name = card_infos["card_name"]
+		zone = card_infos["zone"]
+		orientation = card_infos["orientation"]
 		
 		response = requests.post(API_URL, params={"card_name": card_name, "zone": zone, "orientation": orientation, "action": "PLACED"})
 		if response.status_code == 200 :
 			data = response.json()
-			print(f"{data}")
+			print(f"Carte trouvé sur l'API Yu-gi-Oh : {data}")
 			client.publish(TOPIC_GODOT_OUT, payload)
 			print(f"Notification envoyée à Godot sur {TOPIC_GODOT_OUT}")
 		else :
