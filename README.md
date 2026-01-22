@@ -175,9 +175,9 @@ Récupère les dernières données d'une carte par son nom
 {
   "card_name": "Blue-Eyes White Dragon",
   "image_url": "url_de_l_image",
-  "zone": "Monster Card Zone",
-  "orientation": "face-up",
-  "action": "SUMMON",
+  "zone": "Monster1",
+  "orientation": "Visible",
+  "action": "PLACED",
   "timestamp": "2026-01-22T10:30:00"
 }
 \`\`\`
@@ -187,14 +187,9 @@ Enregistre une action sur une carte
 
 **Paramètres (query) :**
 - `card_name` : Nom de la carte (requis)
-- `zone` : Zone du terrain (par défaut: "unknown")
-- `orientation` : Face-up/face-down (par défaut: "unknown")
-- `action` : Type d'action (par défaut: "UNKNOWN")
-
-**Exemple :**
-\`\`\`bash
-curl -X POST "http://localhost:8000/card?card_name=Blue-Eyes%20White%20Dragon&zone=Monster%20Zone&orientation=face-up&action=SUMMON"
-\`\`\`
+- `zone` : Zone du terrain
+- `orientation` : Visible/Cachee
+- `action` : Type d'action
 
 ### GET /actions
 Récupère toutes les actions entre deux dates/heures
@@ -240,25 +235,6 @@ Récupère toutes les actions entre deux dates/heures
 | `yugioh/godot/in` | Subscribe | Reçoit les données de Godot |
 | `yugioh/godot/out` | Publish | Envoie les données à Godot |
 
-### Format des messages
-
-**Format JSON pour card/in :**
-\`\`\`json
-{
-  "card_name": "Blue-Eyes White Dragon",
-  "action": "SUMMON"
-}
-\`\`\`
-
-**Format JSON pour godot/in :**
-\`\`\`json
-{
-  "card_name": "Blue-Eyes White Dragon",
-  "zone": "Monster Card Zone",
-  "orientation": "face-up"
-}
-\`\`\`
-
 ---
 
 ## 🛠️ Technologies
@@ -293,7 +269,7 @@ La table `history` contient :
 - `card_name` : Nom de la carte
 - `image_url` : URL de l'image
 - `zone` : Zone du terrain
-- `orientation` : Orientation de la carte
+- `orientation` : Orientation de la carte (Visible/Cachee)
 - `action` : Type d'action effectuée
 - `timestamp` : Horodatage ISO 8601
 
